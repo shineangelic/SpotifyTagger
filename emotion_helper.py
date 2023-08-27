@@ -116,7 +116,6 @@ def get_spotify_data(songs):
                 songs[song['uri']]['url'] = song['analysis_url']
                 songs[song['uri']]['uri'] = song['uri']
         time.sleep(0.2)
-        print(song['uri'])
     return songs
 
 def get_length_of_file(location):

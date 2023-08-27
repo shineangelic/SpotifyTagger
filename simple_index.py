@@ -1,4 +1,6 @@
-import sys, os, emotion_helper
+import sys 
+import os
+import emotion_helper
 
 import eyed3
 #from eyed3 import Mp3AudioFile
@@ -36,7 +38,11 @@ def parse_Dir(direct:str):
         
         if tmp != None:
             if len(genres) == 0:
-                genres = emotion_helper.get_artist_genres(tmp['album artist'])
+                try:
+                    artistk = tmp['album artist']
+                except Exception:
+                    artistk = tmp['artist']
+                genres = emotion_helper.get_artist_genres(artistk)
                 for gen in genres:
                     xlibstr += gen + ';'
 
@@ -72,7 +78,7 @@ def process_audiofile(km):
     try:
         oldgenre = audiofile.tag.genre.name
     except Exception:
-        oldgenre = None         
+        oldgenre = None      
              
     if (oldgenre is None or len(oldgenre) == 0) and len(newg)>0:
         audiofile.tag.user_text_frames.set(newg,"SPTY_GENRE_REVIEW" )
@@ -101,17 +107,16 @@ def process_audiofile(km):
     audiofile.tag.user_text_frames.set(str(instrumentalness),"SPTY_INSTRUMENTALNESS" )
 
     audiofile.tag.user_text_frames.set(str(km['loudness']),"SPTY_LOUDNESS" )
-
-    tags = audiofile.tag
+ 
     audiofile.tag.save()
 
 if __name__ == '__main__':
     res = 0
-    start_letter = ''
-    end_letter = '3'
+    start_letter = 't'
+    end_letter = 'z'
     for root, dirs, files in os.walk("E:\\Musica", topdown=True):
         for i,name in enumerate(dirs):
-            if name[0] >= start_letter and name[0] < end_letter  :
+            if name[0].lower() >= start_letter and name[0].lower() < end_letter  :
                 print(str(i)+"/"+str(len(dirs)) +"PROCESS: ", root+ '\\' +name)  
                 res += parse_Dir(root+ '\\' +name)
                 print(str(i)+"/"+str(len(dirs))+"PROCESSED "+ root+ '\\' +name + ': ' + str(res)) 
