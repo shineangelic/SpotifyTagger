@@ -21,7 +21,15 @@ client_credentials_manager = SpotifyClientCredentials(client_id=settings['spotif
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 sp.trace=False
 
-
+def get_artist_genres(urn:str):
+    genres = []
+    results = sp.search(q='artist:' + urn, type='artist')
+    items = results['artists']
+    for it in items['items']:
+        for genre in it['genres']:
+            genres.append(genre)
+    print(genres)
+    return genres
 
 def import_from_dir(directory):
     """
