@@ -12,7 +12,7 @@ Some hand work is necessary to configure visualization and filtering with these 
 
 
 # Instructions
-
-update settings.json
-insert target dir in main
-python simple_index.py
+- pip install requirements
+- update settings.json using your own spotify API keys
+- insert target dir in main inside simple_index.py
+- run simple_index.py
