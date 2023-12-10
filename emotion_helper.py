@@ -52,10 +52,12 @@ def get_tags(song):
     Returns: dictionary of song with 'title', 'artist' and 'album' added
     """
     audio = ID3(song['file_location'])
-     
-    song['title'] = audio['TIT2'].text[0] 
-    song['artist'] = audio['TPE1'].text[0]
-    song['album'] = audio['TALB'].text[0]
+    if 'TIT2' in audio:
+        song['title'] = audio['TIT2'].text[0]
+    if 'TPE1' in audio:
+        song['artist'] = audio['TPE1'].text[0]
+    if 'TALB' in audio:
+        song['album'] = audio['TALB'].text[0]
     if 'TPE2' in audio:
         song['album artist'] = audio['TPE2'].text[0]
     return song
@@ -69,8 +71,6 @@ def get_uri(song):
     srchk = 'track:' +song['title'] + ' '+'artist:' + song['artist']
     if 'album artist' in song:
         srchk += ' '+'artist:' + song['album artist']
-    else:
-        srchk += ' '+'artist:' + song['artist']
     #if song['album']:
     #    srchk += ' '+'album:' + song['album']
     result = sp.search(srchk)

@@ -11,15 +11,19 @@ warnings.simplefilter("ignore")
  
 
          
-def parse_Dir(direct:str):
+def parse_Dir(direct:str) -> int:
     '''Parsa e processa una dir'''
     done=0
     totsize = 0
     directory = direct
 
     totalfiles = emotion_helper.import_from_dir(directory)
+
+    if len(totalfiles) == 0:
+        print('SKIPPING import_from_dir NOTHING FOUND', direct)
+        return 0
      
-    print("Getting spotify for a total of mp3: ", str(len(totalfiles)))
+    print("Searching tags for a total of mp3: ", str(len(totalfiles)))
     tagged_totalfiles = []
     uri_totalfiles = []
     for file in totalfiles:
@@ -28,6 +32,10 @@ def parse_Dir(direct:str):
         except Exception as e:
             print ('Error: '+ str(e))
 
+    if len(tagged_totalfiles) == 0:
+        print('SKIPPING, NO TAG FOUND', direct)
+        return 0
+    
     print("Getting spotify URI for a total of mp3: ", str(len(tagged_totalfiles)))     
     genres = []  
     xlibstr = ''
@@ -53,10 +61,10 @@ def parse_Dir(direct:str):
 
     uri_index = emotion_helper.int_index_to_uri_index(uri_totalfiles)
 
-    print("Getting spotify data for found entries:", len(uri_index))
-    totalfiles = emotion_helper.get_spotify_data(uri_index) 
+    print("Retrieving spotify data for found entries:", len(uri_index))
+    procfiles = emotion_helper.get_spotify_data(uri_index) 
 
-    for daaggiornare, audiof in totalfiles.items():
+    for daaggiornare, audiof in procfiles.items():
         print('UPDATING ', daaggiornare)
         try:
             km = audiof
@@ -75,20 +83,7 @@ def process_audiofile(km):
     audiofile.tag.user_text_frames.set(str(km['tempo']),"SPTY_TEMPO" )
     audiofile.tag.user_text_frames.set(str(km['mode']),"SPTY_MODE" )
     audiofile.tag.user_text_frames.set(str(km['uri']),"SPTY_URI" )
-
-    try:
-        oldgenre = audiofile.tag.genre.name
-    except Exception:
-        oldgenre = None      
-             
-    if (oldgenre is None or len(oldgenre) == 0) and len(newg)>0:
-        audiofile.tag.user_text_frames.set(newg,"SPTY_GENRE_REVIEW" )
-    elif oldgenre in newg and len(newg)>len(oldgenre):
-        audiofile.tag.user_text_frames.set(newg,"SPTY_GENRE_REVIEW" )
-    elif newg in oldgenre:
-        audiofile.tag.user_text_frames.set(oldgenre,"SPTY_GENRE_REVIEW" )
-    else:#non trovato
-        audiofile.tag.user_text_frames.set(oldgenre+';'+newg,"SPTY_GENRE_REVIEW" )
+                  
     valence = int(km['valence'] * 100)
     audiofile.tag.user_text_frames.set(str(valence),"SPTY_VALENCE" )
 
@@ -114,12 +109,11 @@ def process_audiofile(km):
 if __name__ == '__main__':
     res = 0
     diridx = 0
-    for root, dirs, files in os.walk("E:\\Musica\\loscil", topdown=True):
+    for root, dirs, files in os.walk("E:\\Musica\\Brian Eno", topdown=True):
         diridx += 1
         for i,name in enumerate(dirs):
-            print(str(i)+"/"+str(len(dirs)) +"PROCESS: ", root+ '\\' +name)  
+            print(str(i)+"/"+str(len(dirs)) +" PROCESS: ", root+ '\\' +name)  
             res += parse_Dir(root+ '\\' +name)
-            print(str(i)+"/"+str(len(dirs))+"PROCESSED "+ root+ '\\' +name + ': ' + str(res)) 
              
 
 
