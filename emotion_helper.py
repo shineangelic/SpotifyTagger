@@ -18,12 +18,12 @@ with open('settings.json') as data_file:
     settings = json.load(data_file)
 
 client_credentials_manager = SpotifyClientCredentials(client_id=settings['spotify']['client_id'], client_secret=settings['spotify']['client_secret'])
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-sp.trace=False
+spty_client = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+spty_client.trace=False
 
 def get_artist_genres(urn:str):
     genres = []
-    results = sp.search(q='artist:' + urn, type='artist')
+    results = spty_client.search(q='artist:' + urn, type='artist')
     items = results['artists']
     for it in items['items']:
         for genre in it['genres']:
@@ -68,24 +68,29 @@ def get_uri(song):
         song: dictionary of song
     Returns: dictionary of song with 'spotify_uri' added
     """
-    srchk = 'track:' +song['title'] + ' '+'artist:' + song['artist']
+    if  'title' in song:
+        srchk = 'track:' +song['title']
+    else:
+        return song#niente da fare
     if 'album artist' in song:
         srchk += ' '+'artist:' + song['album artist']
+    else:
+        srchk += ' '+'artist:' + song['artist']
     #if song['album']:
     #    srchk += ' '+'album:' + song['album']
-    result = sp.search(srchk)
+    result = spty_client.search(srchk)
     for i in result['tracks']['items']:
         if (i['artists'][0]['name'] == song['artist']) and (i['name'] == song['title']):
             song['uri'] = i['uri']
             break
-    else:
-        try:
-            song['uri'] = result['tracks']['items'][0]['uri']
-        except:
-            return None
+        else:
+            try:
+                song['uri'] = result['tracks']['items'][0]['uri']
+            except Exception:
+                pass#e return song
     return song
 
-def int_index_to_uri_index(songs):
+def int_index_to_uri_index(songs) -> dict:
     converted = {}
     for i in songs:
         converted[i['uri']] = i
@@ -100,7 +105,7 @@ def get_spotify_data(songs):
     indexs = [i for i in songs]
     indexs_chunked = chunks(indexs, 50)
     for chunk in indexs_chunked:
-        features = sp.audio_features(chunk)
+        features = spty_client.audio_features(chunk)
         for song in features:
             if song != None:
                 songs[song['uri']]['energy'] = song['energy']
