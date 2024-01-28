@@ -60,6 +60,8 @@ def get_tags(song):
         song['album'] = audio['TALB'].text[0]
     if 'TPE2' in audio:
         song['album artist'] = audio['TPE2'].text[0]
+    if 'TCON' in audio:
+        song['genre'] = audio['TCON'].text[0]
     return song
 
 def get_uri(song):

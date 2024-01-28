@@ -1,0 +1,4 @@
+matplotlib_venn
+eyed3
+ipywidgets
+kaleido
