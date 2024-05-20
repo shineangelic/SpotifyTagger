@@ -2,3 +2,5 @@ spotipy/__pycache__/
 __pycache__/
 settings.json
 spotipy/__init__.py
+out.csv
+3d_chart.pdf
