@@ -1,5 +1,8 @@
 SpotifyTagger
 
+Progetto rotto dal 2025 a causa di cambio policy API https://developer.spotify.com/documentation/web-api/reference/get-audio-analysis
+andate a fanculo
+
 Starting from [Lucy-In-The-Sky-With-Emotion](https://github.com/brentvollebregt/Lucy-In-The-Sky-With-Emotion) code, I wrote a simple spotify mood tagger.
 
 It writes new ID3 TAG on SPTY_* of TXX user Tags. An audio player like MusicBee will be then configured to highlight the new features, configured as "ratings"
